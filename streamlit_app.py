@@ -44,17 +44,6 @@ except URLError as e:
     streamlite.error()
 #streamlit.write('The user entered ', fruit_choice)
 
-#import requests
-#fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
-#streamlit.text(fruityvice_response.json())
-
-# write your own comment -what does the next line do? : Use Panda
-#fruityvice_normalized = pandas.json_normalize(fruityvice_response.json())
-# write your own comment - what does this do?
-#streamlit.dataframe(fruityvice_normalized)
-#don't run anything pas here while we troubleshoot
-#streamlit.stop()
-
 #import snowflake.connector
 streamlit.header("The fruit load list contains:")
 #snowflake-related functions
@@ -70,8 +59,31 @@ if streamlit.button('get fruit load list'):
   streamlit.dataframe(my_data_rows)
 
 # Allow the end user to add a fruit to the list
-#add_my_fruit = streamlit.text_input('What fruit would you like to add?')
-#streamlit.write('Thanks for adding ', add_my_fruit)
+def insert_row_snowflake(new_fruit):
+  with my_cnx.cursor() as my_cur:
+    my_cur.execute("insert into fruit_load_list values ('from streamlit')")
+    return "Thanks for adding " + new_fruit
+  
+add_my_fruit = streamlit.text_input('What fruit would you like to add?')
+if streamlit.button('add a fruit to the list'):
+  my_cnx = snowflake.connector.connect(**streamlit.secrets["snowflake"])
+  back_from_function = insert_row_snowflake(add_my_fruit)
+  streamlit.text(back_from_function)
 
 #This will not work correctly, but just go with it for now
-#my_cur.execute("insert into fruit_load_list values ('from streamlit')");
+#;
+
+
+
+#import requests
+#fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choice)
+#streamlit.text(fruityvice_response.json())
+
+# write your own comment -what does the next line do? : Use Panda
+#fruityvice_normalized = pandas.json_normalize(fruityvice_response.json())
+# write your own comment - what does this do?
+#streamlit.dataframe(fruityvice_normalized)
+#don't run anything pas here while we troubleshoot
+#streamlit.stop()
+
+
